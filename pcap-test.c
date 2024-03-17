@@ -104,11 +104,16 @@ int main(int argc, char* argv[]) {
         struct libnet_ethernet_hdr *eth_hdr = packet;
         if (ntohs(eth_hdr->ether_type) != ETHERTYPE_IP) continue;
         printf("type = %04x\n", ntohs(eth_hdr->ether_type));
+        printf("dst mac = %x\n", eth_hdr->ether_dhost);
+        printf("src mac = %x\n", eth_hdr->ether_shost);
+
 
         struct libnet_ipv4_hdr *ip_hdr = packet + sizeof(struct libnet_ethernet_hdr);
-        if (ip_hdr->ip_p != IPPROTO_TCP) continue;
+        if (ip_hdr->ip_p != IPPROTO_TCP) continue;    // IPPROTO_TCP = 6
         printf("protocol = %d\n", ip_hdr->ip_p);
-        printf("IPPROTO_TCP=%d\n", IPPROTO_TCP);
+        printf("dst ip = %s\n", inet_ntoa(ip_hdr->ip_dst));
+        printf("src ip = %s\n", inet_ntoa(ip_hdr->ip_src));
+
     
     	printf("======================================\n");
     }

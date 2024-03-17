@@ -6,11 +6,6 @@
 #define ETHER_ADDR_LEN 6
 #define ETHERTYPE_IP            0x0800
 
-// Ethernet Header의 src mac / dst mac
-// IP Header의 src ip / dst ip
-// TCP Header의 src port / dst port
-// Payload(Data)의 hexadecimal value(최대 10바이트까지만)
-
 struct libnet_ethernet_hdr
 {
     u_int8_t  ether_dhost[ETHER_ADDR_LEN];/* destination ethernet address */
@@ -128,6 +123,12 @@ bool parse(Param* param, int argc, char* argv[]) {
     return true;
 }
 
+
+// Ethernet Header의 src mac / dst mac
+// IP Header의 src ip / dst ip
+// TCP Header의 src port / dst port
+// Payload(Data)의 hexadecimal value(최대 10바이트까지만)
+
 int main(int argc, char* argv[]) {
     if (!parse(&param, argc, argv))
         return -1;
@@ -154,6 +155,8 @@ int main(int argc, char* argv[]) {
         if (ntohs(eth_hdr->ether_type) != ETHERTYPE_IP) 
             continue;
         printf("type = %04x\n", ntohs(eth_hdr->ether_type));
+        printf("dst mac = %x", eth_hdr->ether_dhost);
+        printf("src mac = %x", eth_hdr->ether_shost);
 
         struct libnet_ipv4_hdr *ip_hdr = packet + sizeof(struct libnet_ethernet_hdr);
         if (ip_hdr->ip_p != IPPROTO_TCP) 
