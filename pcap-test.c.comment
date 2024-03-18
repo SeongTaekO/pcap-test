@@ -123,6 +123,8 @@ bool parse(Param* param, int argc, char* argv[]) {
     return true;
 }
 
+
+// 패킷 구조: https://hack-cracker.tistory.com/112
 int main(int argc, char* argv[]) {
     if (!parse(&param, argc, argv))
         return -1;
@@ -148,6 +150,10 @@ int main(int argc, char* argv[]) {
         struct libnet_ethernet_hdr *eth_hdr = packet;
         if (ntohs(eth_hdr->ether_type) != ETHERTYPE_IP) continue;
         printf("type = %04x\n", ntohs(eth_hdr->ether_type));
+        //printf("dst mac = %x\n", eth_hdr->ether_dhost);
+        //printf("src mac = %x\n", eth_hdr->ether_shost);
+        
+        // mac 주소 크기 6byte
         printf("dst mac = ");
         for (int i = 0; i < ETHER_ADDR_LEN; ++i){
             printf("%02x", eth_hdr->ether_dhost[i]);
@@ -173,8 +179,11 @@ int main(int argc, char* argv[]) {
         printf("dst port:%x\n", ntohs(tcp_hdr->th_dport));
         printf("src port:%x\n", ntohs(tcp_hdr->th_sport));
         
+        // Data payload
         const u_char *payload = packet + sizeof(struct libnet_ethernet_hdr) + sizeof(struct libnet_ipv4_hdr) + sizeof(struct libnet_tcp_hdr);
+        //int payload_length = header->caplen - sizeof(struct libnet_ethernet_hdr) - sizeof(struct libnet_ipv4_hdr) - sizeof(struct libnet_tcp_hdr);
         printf("Data payload (hexadecimal): ");
+        //for (int i = 0; i < payload_length; ++i)
         for (int i = 0; i < 10; ++i)
         {
             printf("%02x ", payload[i]);
